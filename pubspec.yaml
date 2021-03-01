@@ -1,0 +1,11 @@
+name: bididi
+description: Simple Wrapper to run test in a BDD style
+version: 0.0.1
+author: mobiplay
+
+environment:
+  sdk: ">=2.10.0 <3.0.0"
+
+dependencies:
+  flutter_test:
+    sdk: flutter
