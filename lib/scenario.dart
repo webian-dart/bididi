@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-typedef ScenarioAction(Scenario);
+typedef ScenarioAction(Scenario scenario);
 
 class Scenario {
   bool _hasGiven = false;
@@ -9,7 +9,8 @@ class Scenario {
   List<_Task> _actions = [];
   final String title;
 
-  Scenario(String title, ScenarioAction action) : this.title = "Scenario: " + (title ?? "") {
+  Scenario(String? title, ScenarioAction? action)
+      : this.title = "Scenario: " + (title ?? "") {
     action?.call(this);
   }
 
@@ -25,7 +26,7 @@ class Scenario {
   }
 
   Future<void> when(String label, Function() action) async {
-    if (_done) return this;
+    if (_done) return;
     if (_hasGiven == false) throw Exception("A 'given' must be provided before a 'when'.");
     _hasWhen = true;
     _queueAction(_Task("When $label", action));
@@ -33,14 +34,14 @@ class Scenario {
   }
 
   Future<void> and(String label, Function() action) async {
-    if (_done) return this;
+    if (_done) return;
     if (_hasGiven == false || _hasWhen == false) throw Exception("A 'given' and 'when' must be provided before any 'and'.");
     _queueAction(_Task("And $label", action));
     return;
   }
 
   Future<void> then(String label, Function() action) async {
-    if (_done) return this;
+    if (_done) return;
     if (_hasGiven == false || _hasWhen == false) throw Exception("A given and when must be provided before a 'then.");
     _done = true;
     _queueAction(_Task("Then $label", action));
@@ -59,8 +60,8 @@ class Scenario {
     });
   }
 
-  _runAction(_Task task) async {
-    await test(task.label, () async {
+  Future<void> _runAction(_Task task) async {
+    test(task.label, () async {
       await task.action();
     });
   }
